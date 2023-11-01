@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-initdb-config
+data:
+  init.sql: |
+    create database IF NOT EXISTS mydb;
+    use mydb;
+    CREATE TABLE IF NOT EXISTS users (user_id INT(11) NOT NULL,
+                                        user_name VARCHAR(30) NOT NULL,
+                                        creation_date DATETIME DEFAULT NOW(),
+                                        CONSTRAINT user_id_pk PRIMARY KEY (user_id));
+    CREATE TABLE IF NOT EXISTS config (id INT(11) NOT NULL, 
+                                        user_name VARCHAR(30) NOT NULL,
+                                        url VARCHAR(255) NOT NULL, 
+                                        browser VARCHAR(2048) NOT NULL, 
+                                        CONSTRAINT u_config UNIQUE (url), 
+                                        CONSTRAINT id_pk PRIMARY KEY (id));
+

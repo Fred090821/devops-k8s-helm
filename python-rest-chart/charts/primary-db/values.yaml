@@ -1,0 +1,11 @@
+enabled: true
+
+replicaCount: 1
+
+image:
+  repository: mysql
+  pullPolicy: Always
+  tag: "8.0.33"
+  
+service:
+    type: LoadBalancer

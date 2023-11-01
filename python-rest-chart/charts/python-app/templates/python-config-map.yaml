@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: python-app-config
+data:
+  db-host: mysql-service.default.svc.cluster.local
+  db-name: mydb

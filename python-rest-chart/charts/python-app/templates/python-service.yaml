@@ -1,0 +1,12 @@
+# Define a 'Service' To Expose the application
+apiVersion: v1
+kind: Service
+metadata:
+  name: devops-k8s-helm-service
+spec:
+  ports:
+    - port: 6000
+      targetPort: 5003
+  selector:
+    app: devops-k8s-helm
+  type: LoadBalancer

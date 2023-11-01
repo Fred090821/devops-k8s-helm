@@ -1,0 +1,7 @@
+replicaCount: 1
+image:
+  repository: adedo2009/devops-k8s-helm
+  python:
+    tag: latest
+service:
+    type: LoadBalancer

@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devops-k8s-helm
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: devops-k8s-helm
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: devops-k8s-helm
+    spec:
+      containers:
+        - name: devops-k8s-helm
+          image: {{ .Values.image.repository }}:{{ .Values.image.python.tag }}
+          ports:
+            - containerPort: 5003
+          env:
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: python-app-config
+                  key: db-host
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: python-app-config
+                  key: db-name
+            - name: MYSQL_ROOT_USER
+              valueFrom:
+                secretKeyRef:
+                  key: mysql_root_user
+                  name: python-creds
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: mysql_root_password
+                  name: python-creds
+            - name: MYSQL_PORT
+              value: "3307"

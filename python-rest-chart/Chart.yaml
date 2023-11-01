@@ -1,0 +1,17 @@
+apiVersion: v2
+name: python-rest-chart
+description: A Helm chart for Kubernetes
+
+type: application
+
+version: 0.1.0
+
+appVersion: "1.16.0"
+
+dependencies:
+  - name: primary-db
+    version: "1.0.0"
+    repository: "file://../charts/primary-db"
+  - name: python-app
+    version: "1.0.0"
+    repository: "file://../charts/python-app"
