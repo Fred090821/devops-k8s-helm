@@ -142,8 +142,7 @@ pipeline {
                script {
                     try{
                         sh '''
-                                helm install python-app ./python-rest-chart/charts/python-app --set image.python.tag="${BUILD_NUMBER}"
-                                sleep 30'''
+                                helm install python-app ./python-rest-chart/charts/python-app --set image.python.tag="${BUILD_NUMBER}"'''
 
                     }catch(Exception e){
                         echo 'Exception Helm Install'
@@ -152,101 +151,101 @@ pipeline {
                 }
             }
         }
-        stage('Parallel Stage') {
-            parallel {
-                stage('Set the url to k8s_url') {
-                    steps {
-                       echo ' minikube service ===> '
-                       script {
-                            try{
-                                sh '''
-                                   sleep 30
-                                   minikube service devops-k8s-helm-service --url > k8s_url.txt'''
-                                sh '''
-                                   echo "RUNNING RUNNING" '''
-                            }catch(Exception e){
-                                echo 'Exception Docker Rest Tests'
-                                echo 'Exception k8s_url.txt'
-                                error('Aborting the build')
-                            }
-                        }
-                    }
-                }
-                stage('Retrieve the url from k8s_url') {
-                    steps {
-                       echo ' k8s_url ===> '
-                       script {
-                            try{
-                                sh '''
-                                    sleep 5
-                                    k8s_url = $(cat ./k8s_url.txt)
-                                    echo "CURRENT TEST URL: ${k8s_url}"
-                                    k8s_url=$(cat k8s_url.txt)'''
-                                    echo 'CURRENT TEST URL: ${k8s_url}'
-                            }catch(Exception e){
-                                echo 'Exception Docker Rest Tests'
-                                echo 'Exception k8s_url.txt'
-                                error('Aborting the build')
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        stage(' Kubernetes run test ') {
-            steps {
-            echo '=== Kubernetes run test ==='
-                script {
-                    try{
-                        if (checkOs() == 'Windows') {
-                            bat '/usr/local/bin/pytest ./pythonk8stest/pythonk8stest.py'
-                        } else {
-                            sh '/usr/local/bin/pytest ./pythonk8stest/pythonk8stest.py'
-                        }
-                    }catch(Exception e){
-                        echo 'Exception Kubernetes run test'
-                        error('Aborting The Build')
-                    }
-                }
-            }
-        }
+//         stage('Parallel Stage') {
+//             parallel {
+//                 stage('Set the url to k8s_url') {
+//                     steps {
+//                        echo ' minikube service ===> '
+//                        script {
+//                             try{
+//                                 sh '''
+//                                    sleep 30
+//                                    minikube service devops-k8s-helm-service --url > k8s_url.txt'''
+//                                 sh '''
+//                                    echo "RUNNING RUNNING" '''
+//                             }catch(Exception e){
+//                                 echo 'Exception Docker Rest Tests'
+//                                 echo 'Exception k8s_url.txt'
+//                                 error('Aborting the build')
+//                             }
+//                         }
+//                     }
+//                 }
+//                 stage('Retrieve the url from k8s_url') {
+//                     steps {
+//                        echo ' k8s_url ===> '
+//                        script {
+//                             try{
+//                                 sh '''
+//                                     sleep 5
+//                                     k8s_url = $(cat ./k8s_url.txt)
+//                                     echo "CURRENT TEST URL: ${k8s_url}"
+//                                     k8s_url=$(cat k8s_url.txt)'''
+//                                     echo 'CURRENT TEST URL: ${k8s_url}'
+//                             }catch(Exception e){
+//                                 echo 'Exception Docker Rest Tests'
+//                                 echo 'Exception k8s_url.txt'
+//                                 error('Aborting the build')
+//                             }
+//                         }
+//                     }
+//                 }
+//             }
+//         }
+//         stage(' Kubernetes run test ') {
+//             steps {
+//             echo '=== Kubernetes run test ==='
+//                 script {
+//                     try{
+//                         if (checkOs() == 'Windows') {
+//                             bat '/usr/local/bin/pytest ./pythonk8stest/pythonk8stest.py'
+//                         } else {
+//                             sh '/usr/local/bin/pytest ./pythonk8stest/pythonk8stest.py'
+//                         }
+//                     }catch(Exception e){
+//                         echo 'Exception Kubernetes run test'
+//                         error('Aborting The Build')
+//                     }
+//                 }
+//             }
+//         }
     }
     post {
-         always {
-        echo '=== post Clean Environment ==='
-            script {
-                try{
-                         sh '''
-                          helm uninstall primary-db
-                          helm uninstall python-app
-
-                          # Check if the image exists and remove it
-                          if docker images -q $APP_IMAGE_NAME 2> /dev/null; then
-                              docker rmi $APP_IMAGE_NAME
-                          fi
-
-                          # Check if the image with the registry exists and remove it
-                          if docker images -q $HUB_REGISTRY_ID/$APP_IMAGE_NAME 2> /dev/null; then
-                              docker rmi $HUB_REGISTRY_ID/$APP_IMAGE_NAME
-                          fi
-
-                          # Check if the tagged image exists and remove it
-                          if docker images -q $HUB_REGISTRY_ID/$APP_IMAGE_NAME:$BUILD_NUMBER 2> /dev/null; then
-                              docker rmi $HUB_REGISTRY_ID/$APP_IMAGE_NAME:$BUILD_NUMBER
-                          fi'''
-
-                          def currentDirectory = pwd()
-                          echo "CURRENT DIRECTORY: ${currentDirectory}"
-                        // Clean the workspace
-                        // cleanWs()
-
-                }catch(Exception e){
-                        // Catch any exception and print details
-                        echo "Exception post Clean Environment :::: ${e}"
-                        error('Aborting the build')
-                }
-            }
-        }
+//          always {
+//         echo '=== post Clean Environment ==='
+//             script {
+//                 try{
+//                          sh '''
+//                           helm uninstall primary-db
+//                           helm uninstall python-app
+//
+//                           # Check if the image exists and remove it
+//                           if docker images -q $APP_IMAGE_NAME 2> /dev/null; then
+//                               docker rmi $APP_IMAGE_NAME
+//                           fi
+//
+//                           # Check if the image with the registry exists and remove it
+//                           if docker images -q $HUB_REGISTRY_ID/$APP_IMAGE_NAME 2> /dev/null; then
+//                               docker rmi $HUB_REGISTRY_ID/$APP_IMAGE_NAME
+//                           fi
+//
+//                           # Check if the tagged image exists and remove it
+//                           if docker images -q $HUB_REGISTRY_ID/$APP_IMAGE_NAME:$BUILD_NUMBER 2> /dev/null; then
+//                               docker rmi $HUB_REGISTRY_ID/$APP_IMAGE_NAME:$BUILD_NUMBER
+//                           fi'''
+//
+//                           def currentDirectory = pwd()
+//                           echo "CURRENT DIRECTORY: ${currentDirectory}"
+//                         // Clean the workspace
+//                         // cleanWs()
+//
+//                 }catch(Exception e){
+//                         // Catch any exception and print details
+//                         echo "Exception post Clean Environment :::: ${e}"
+//                         error('Aborting the build')
+//                 }
+//             }
+//         }
         success {
             echo 'All test run successfully'
         }
